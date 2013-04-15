@@ -50,8 +50,8 @@ public static DefaultListModel model;
 public static DataOutputStream stream;
 public static Chat_Client c[]=new Chat_Client[30];
 public static Conferinta conf ;
-public static ImageIcon icon = new ImageIcon("D:\\Chat\\1.gif");
-public static ImageIcon icon2 = new ImageIcon("D:\\Chat\\2.gif");
+public static ImageIcon icon = new ImageIcon("1.gif");
+public static ImageIcon icon2 = new ImageIcon("2.gif");
     /** Creates new form Meniu */
     public Meniu() {
         initComponents();
