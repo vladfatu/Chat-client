@@ -121,10 +121,10 @@ public static DataOutputStream stream;
     }// </editor-fold>//GEN-END:initComponents
 
     private void sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendActionPerformed
-        send("");
+        send(jTextField1.getText(), false);
     }//GEN-LAST:event_sendActionPerformed
 
-    public void send(String mesaj)
+    public void send(String mesaj, boolean isFile)
     {
         try {
             stream = new DataOutputStream(s.getOutputStream());
@@ -132,7 +132,7 @@ public static DataOutputStream stream;
             System.out.println("Streamul nu poate fi creat");
         }
         try {
-            if (mesaj.equals("")) stream.writeUTF("/msg "+nume1+" "+jTextField1.getText());
+            if (!isFile) stream.writeUTF("/msg "+nume1+" "+mesaj);
             else 
             {
                 String fisier=mesaj;
@@ -153,7 +153,7 @@ public static DataOutputStream stream;
             System.out.println("textul nu poate fi scris");
             return;
         }
-        if (mesaj.equals("")) jTextArea1.setText(jTextArea1.getText()+"[eu]:"+jTextField1.getText()+"\n");
+        if (!isFile) jTextArea1.setText(jTextArea1.getText()+"[eu]:"+mesaj+"\n");
         if (jTextField1.getText().equals("/quit"))
         {
             Input.ok=false;
@@ -193,7 +193,7 @@ public static DataOutputStream stream;
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
         int key = evt.getKeyCode();
         if (key == java.awt.event.KeyEvent.VK_ENTER)
-            send("");
+            send(jTextField1.getText(), false);
     }//GEN-LAST:event_jTextField1KeyPressed
 
     /**
@@ -278,7 +278,7 @@ public static DataOutputStream stream;
             System.out.println("GOT FILE: "
                 + file.getCanonicalPath());
             //Input.fisier=file.getCanonicalPath();
-            send(file.getCanonicalPath());
+            send(file.getCanonicalPath(), true);
             // Now do something with the file...
           }
           return true;

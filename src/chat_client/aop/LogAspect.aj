@@ -2,32 +2,44 @@ package chat_client.aop;
 
 public aspect LogAspect {
 
-	pointcut publicMethodExecuted(): execution(public * *(..));
-
-	before(): publicMethodExecuted() {
-		System.out.printf("Aspect: About to enter method: %s. \n",
-				thisJoinPoint.getSignature());
-	}
-
-	after(): publicMethodExecuted() {
-
-		Object[] arguments = thisJoinPoint.getArgs();
-		for (int i = 0; i < arguments.length; i++) {
-			Object argument = arguments[i];
-			if (argument != null) {
-				System.out.printf(
-						"Aspect: With argument of type %s and value %s. \n",
-						argument.getClass().toString(), argument);
-			}
+	private static long loginTime;
+	
+	pointcut sendMethodExecuted(String mesaj, boolean isFile): 
+		execution(public * chat_client.Chat_Client.send(String, boolean)) && args(mesaj, isFile);
+	
+	before(String mesaj, boolean isFile): sendMethodExecuted(mesaj, isFile) {
+		if (isFile)
+		{
+			System.out.printf("Aspect: sending file.\n",
+					thisJoinPoint.getSignature());
 		}
-		System.out.printf("Aspect: Exits method: %s. \n",
-				thisJoinPoint.getSignature());
+		else
+		{
+			System.out.printf("Aspect: sending message: " + mesaj + "    .\n",
+					thisJoinPoint.getSignature());
+		}
 	}
 	
-	pointcut adaugaMethodExecuted(): execution(public * chat_client.Meniu.adauga(..));
+	pointcut receiveMethodExecuted(): execution(public * chat_client.Input.handleMessage(String));
 	
-	after(): adaugaMethodExecuted() {
-		System.out.printf("Aspect: adauga: Exits method: %s. \n",
-				thisJoinPoint.getSignature());
+	before(): receiveMethodExecuted() {
+		if (thisJoinPoint.getArgs().length > 0)
+		{
+			String mesaj = (String)thisJoinPoint.getArgs()[0];
+			System.out.printf("Aspect: receiving message: " + mesaj + "  .\n",
+					thisJoinPoint.getSignature());
+		}
+	}
+	
+	pointcut loginMethodExecuted(): execution(* chat_client.Login.loginActionPerformed(..));
+	
+	before(): loginMethodExecuted() {
+		loginTime = System.currentTimeMillis();
+	}
+	
+	pointcut logoutMethodExecuted(): execution(* chat_client.Meniu.formWindowClosing(..));
+	
+	after(): logoutMethodExecuted() {
+		System.out.println("Aspect: logging out after: " + (System.currentTimeMillis() - loginTime) + " milliseconds");
 	}
 }
